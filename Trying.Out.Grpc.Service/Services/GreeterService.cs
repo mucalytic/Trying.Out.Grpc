@@ -1,5 +1,4 @@
 using Grpc.Core;
-using Trying.Out.Grpc.Service;
 
 namespace Trying.Out.Grpc.Service.Services;
 
