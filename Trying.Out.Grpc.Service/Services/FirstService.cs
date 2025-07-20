@@ -20,7 +20,6 @@ public class FirstService : FirstServiceDefinition.FirstServiceDefinitionBase
 
     public override async Task ServerStream(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
     {
-        await responseStream.WriteAsync(new Response { Message = request.Content });
         for (var i = 0; i < 100; i++)
         {
             await responseStream.WriteAsync(new Response { Message = i.ToString() });
