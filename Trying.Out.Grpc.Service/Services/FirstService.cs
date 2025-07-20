@@ -20,8 +20,9 @@ public class FirstService : FirstServiceDefinition.FirstServiceDefinitionBase
 
     public override async Task ServerStream(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
     {
-        for (var i = 0; i < 100; i++)
+        for (var i = 0; i < 10; i++)
         {
+            if (context.CancellationToken.IsCancellationRequested) break;
             await responseStream.WriteAsync(new Response { Message = i.ToString() });
         }
     }
@@ -31,6 +32,7 @@ public class FirstService : FirstServiceDefinition.FirstServiceDefinitionBase
     {
         while (await requestStream.MoveNext())
         {
+            if (context.CancellationToken.IsCancellationRequested) break;
             await responseStream.WriteAsync(new  Response { Message = requestStream.Current.Content });
         }
     }

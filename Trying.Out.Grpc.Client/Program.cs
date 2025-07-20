@@ -11,7 +11,7 @@ Console.WriteLine($"Unary: {response1.Message}");
 
 // ClientStream
 using var stream1 = client.ClientStream();
-for (var i = 0; i < 1000; i++)
+for (var i = 0; i < 10; i++)
 {
     await stream1.RequestStream.WriteAsync(new  Request { Content = i.ToString() });
 }
@@ -23,17 +23,28 @@ Console.WriteLine($"ClientStream: {response2.Message}");
 var builder1 = new StringBuilder();
 var source1 = new CancellationTokenSource();
 using var stream2 = client.ServerStream(new Request { Content = "Hello" });
-while (await stream2.ResponseStream.MoveNext(source1.Token))
+Console.Write("ServerStream: ");
+try
 {
-    builder1.Append(stream2.ResponseStream.Current.Message);
+    while (await stream2.ResponseStream.MoveNext(source1.Token))
+    {
+        var message = stream2.ResponseStream.Current.Message;
+        if (message.Contains('7')) source1.Cancel();
+        builder1.Append(stream2.ResponseStream.Current.Message);
+    }
 }
-Console.WriteLine($"ServerStream: {builder1}");
+catch (Grpc.Core.RpcException e)
+{
+    Console.Write(e.Status.Detail);
+    Console.Write(' ');
+}
+Console.WriteLine(builder1);
 
 // BiDirectionalStream
 var builder2 = new StringBuilder();
 var source2 = new CancellationTokenSource();
 using var stream3 = client.BiDirectionalStream();
-for (var i = 0; i < 1000; i++)
+for (var i = 0; i < 10; i++)
 {
     await stream3.RequestStream.WriteAsync(new Request { Content = i.ToString() });
 }
