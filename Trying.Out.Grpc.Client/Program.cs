@@ -1,7 +1,7 @@
-﻿using System.Text;
-using Grpc.Core;
-using Trying.Out.Grpc.Service;
+﻿using Trying.Out.Grpc.Service;
 using Grpc.Net.Client;
+using System.Text;
+using Grpc.Core;
 
 using var channel = GrpcChannel.ForAddress("http://localhost:5202", new GrpcChannelOptions());
 var client = new FirstServiceDefinition.FirstServiceDefinitionClient(channel);
@@ -34,12 +34,15 @@ try
         if (message.Contains('7')) source1.Cancel();
         builder1.Append(stream2.ResponseStream.Current.Message);
     }
+    var val = stream2.GetTrailers().GetValue("do-not-forget");
+    if (val is not null) builder1.AppendLine($"Do not forget: {val}");
 }
-catch (Grpc.Core.RpcException e)
+catch (RpcException e)
 {
     Console.Write(e.Status.Detail);
     Console.Write(' ');
 }
+
 Console.WriteLine(builder1);
 
 // BiDirectionalStream

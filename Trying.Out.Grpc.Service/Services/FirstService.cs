@@ -20,10 +20,11 @@ public class FirstService : FirstServiceDefinition.FirstServiceDefinitionBase
 
     public override async Task ServerStream(Request request, IServerStreamWriter<Response> responseStream, ServerCallContext context)
     {
+        context.ResponseTrailers.Add(new Metadata.Entry("do-not-forget", "you-are-awesome"));
         var header = context.RequestHeaders.Get("purpose");
         if (header is not null)
         {
-            await responseStream.WriteAsync(new Response { Message = $"Purpose is {header.Value} " });
+            await responseStream.WriteAsync(new Response { Message = $"Your purpose is {header.Value} " });
         }
         for (var i = 0; i < 10; i++)
         {
