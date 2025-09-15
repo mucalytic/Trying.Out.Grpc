@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Grpc.Core;
 using Trying.Out.Grpc.Service;
 using Grpc.Net.Client;
 
@@ -22,7 +23,8 @@ Console.WriteLine($"ClientStream: {response2.Message}");
 // ServerStream
 var builder1 = new StringBuilder();
 var source1 = new CancellationTokenSource();
-using var stream2 = client.ServerStream(new Request { Content = "Hello" });
+var metadata = new Metadata { new Metadata.Entry("purpose", "pass-butter") };
+using var stream2 = client.ServerStream(new Request { Content = "Hello" }, metadata);
 Console.Write("ServerStream: ");
 try
 {
